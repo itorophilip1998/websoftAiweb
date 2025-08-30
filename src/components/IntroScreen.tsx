@@ -94,7 +94,7 @@ export default function IntroScreen({
           </motion.div>
 
           <motion.h1
-            className="text-5xl font-bold mb-6"
+            className="text-4xl font-bold mb-4"
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
@@ -103,7 +103,7 @@ export default function IntroScreen({
           </motion.h1>
 
           <motion.p
-            className="text-xl text-white/90 mb-8 leading-relaxed"
+            className="text-lg text-white/90 mb-6 leading-relaxed"
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
@@ -138,21 +138,21 @@ export default function IntroScreen({
         transition={{ duration: 0.5 }}
       >
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <motion.div
-            className="inline-flex items-center space-x-3 bg-primary text-white px-6 py-3 rounded-full mb-6"
+            className="inline-flex items-center space-x-3 bg-primary text-white px-4 py-2 rounded-full mb-4"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            <Zap className="w-5 h-5" />
-            <span className="font-semibold">Choose Your Path</span>
+            <Zap className="w-4 h-4" />
+            <span className="text-sm font-semibold">Choose Your Path</span>
           </motion.div>
 
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
             What would you like to do first?
           </h2>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-600 text-base">
             Select an option to get started with Websoft AI
           </p>
         </div>
