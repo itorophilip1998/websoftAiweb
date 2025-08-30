@@ -1,0 +1,108 @@
+// AI Chat Styles - Extension Interference Prevention
+
+.ai-chat-input {
+  // Force our styles and prevent extension overrides
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: block !important;
+  width: 100% !important;
+
+  // Input styling that extensions can't override
+  padding: 24px 96px 24px 24px !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 12px !important;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  resize: none !important;
+  overflow: hidden !important;
+  background-color: white !important;
+  color: #374151 !important;
+
+  // Prevent Grammarly and other extensions from injecting styles
+  &::-webkit-input-placeholder {
+    color: #9ca3af !important;
+    opacity: 1 !important;
+  }
+
+  &::-moz-placeholder {
+    color: #9ca3af !important;
+    opacity: 1 !important;
+  }
+
+  &:-ms-input-placeholder {
+    color: #9ca3af !important;
+    opacity: 1 !important;
+  }
+
+  &::placeholder {
+    color: #9ca3af !important;
+    opacity: 1 !important;
+  }
+
+  // Focus states that extensions can't override
+  &:focus {
+    outline: none !important;
+    border-color: #007a6b !important;
+    box-shadow: 0 0 0 3px rgba(0, 122, 107, 0.1) !important;
+  }
+
+  // Disabled state
+  &:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    background-color: #f9fafb !important;
+  }
+}
+
+// Prevent extension tooltips and overlays
+.ai-chat-container {
+  // Isolate from extension interference
+  isolation: isolate;
+
+  // Prevent extension positioning
+  position: relative;
+  z-index: 1;
+
+  // Override any extension styles
+  * {
+    box-sizing: border-box;
+  }
+}
+
+// Specific overrides for common extensions
+.ai-chat-input {
+  // Grammarly overrides
+  &[data-gramm="true"],
+  &[data-gramm_editor="true"] {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    width: 100% !important;
+    padding: 24px 96px 24px 24px !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 12px !important;
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+    resize: none !important;
+    overflow: hidden !important;
+    background-color: white !important;
+    color: #374151 !important;
+  }
+
+  // LanguageTool overrides
+  &[data-lt-gramm="true"] {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    width: 100% !important;
+    padding: 24px 96px 24px 24px !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 12px !important;
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+    resize: none !important;
+    overflow: hidden !important;
+    background-color: white !important;
+    color: #374151 !important;
+  }
+}
