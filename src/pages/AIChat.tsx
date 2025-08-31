@@ -750,7 +750,7 @@ export default function AIChat() {
                   </button>
                 )}
                 <div className="flex flex-col space-y-2">
-                  <h2 className="text-xl font-bold text-primary block">
+                  <h2 className="text-xl font-display font-bold text-primary block">
                     {currentSession?.title || "Websoft AI Chat"}
                   </h2>
                   <div className="flex items-center space-x-2 text-sm">

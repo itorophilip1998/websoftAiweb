@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../contexts/ToastContext";
 import { useNavigate } from "react-router-dom";
-import { clearDemoData } from "../utils/demoData";
 
 import {
   User,
@@ -144,7 +143,9 @@ export default function Dashboard() {
                 <User className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
+                <h1 className="text-xl font-display font-bold text-gray-900">
+                  Dashboard
+                </h1>
                 <p className="text-sm text-gray-500">
                   Welcome back, {user.username}!
                 </p>
@@ -400,26 +401,6 @@ export default function Dashboard() {
                     <Settings className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                     <p className="font-medium text-gray-900">Settings</p>
                     <p className="text-sm text-gray-500">Coming Soon</p>
-                  </motion.button>
-
-                  <motion.button
-                    onClick={() => {
-                      clearDemoData();
-                      showSuccess(
-                        "Demo data cleared! You'll be redirected to sign in."
-                      );
-                      setTimeout(() => {
-                        signOut();
-                        navigate("/signin");
-                      }, 1500);
-                    }}
-                    className="p-4 bg-red-50 border-2 border-red-200 rounded-lg hover:bg-red-100 transition-colors text-center group"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Target className="w-8 h-8 text-red-500 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-                    <p className="font-medium text-red-900">Clear Demo Data</p>
-                    <p className="text-sm text-red-600">Reset all data</p>
                   </motion.button>
                 </div>
               </motion.div>

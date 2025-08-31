@@ -1,10 +1,58 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+}
+
+// Global Font System
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+    sans-serif;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+// Global Link Styles
+a {
+  color: #484ce0;
+  text-decoration: none;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #9bb5ee;
+    text-decoration: underline;
+  }
+
+  &:focus {
+    outline: 2px solid #484ce0;
+    outline-offset: 2px;
+  }
+}
+
+// Button and Interactive Elements
+button,
+.btn {
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 500;
+}
+
+// Form Elements
+input,
+textarea,
+select {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 14px;
 }
 
 html {
@@ -147,11 +195,11 @@ code {
   }
 
   a {
-    color: #2563eb;
+    color: #484ce0;
     text-decoration: underline;
 
     &:hover {
-      color: #1d4ed8;
+      color: #9bb5ee;
     }
   }
 
@@ -263,7 +311,7 @@ a {
         background: #f8f9fa;
         padding: 20px;
         border-radius: 10px;
-        border-left: 4px solid #007bff;
+        border-left: 4px solid #484ce0;
 
         strong {
           color: #495057;

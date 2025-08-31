@@ -70,9 +70,9 @@ export default function IntroScreen({
 
   if (showWelcome) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-primary via-primary/90 to-primary/80 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-gradient-to-br from-[#484ce0] via-[#9bb5ee] to-[#d0e1ff] flex items-center justify-center z-50">
         <motion.div
-          className="text-center text-white max-w-2xl mx-4"
+          className="text-left text-white max-w-2xl mx-4"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
@@ -94,7 +94,7 @@ export default function IntroScreen({
           </motion.div>
 
           <motion.h1
-            className="text-4xl font-bold mb-4"
+            className="text-3xl font-display font-bold mb-3"
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
@@ -103,7 +103,7 @@ export default function IntroScreen({
           </motion.h1>
 
           <motion.p
-            className="text-lg text-white/90 mb-6 leading-relaxed"
+            className="text-base text-white/90 mb-5 leading-relaxed"
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
@@ -138,21 +138,21 @@ export default function IntroScreen({
         transition={{ duration: 0.5 }}
       >
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-left mb-8">
           <motion.div
-            className="inline-flex items-center space-x-3 bg-primary text-white px-4 py-2 rounded-full mb-4"
+            className="inline-flex items-center space-x-3 bg-[#484ce0] text-white px-3 py-1.5 rounded-full mb-3"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            <Zap className="w-4 h-4" />
-            <span className="text-sm font-semibold">Choose Your Path</span>
+            <Zap className="w-3 h-3" />
+            <span className="text-xs font-medium">Choose Your Path</span>
           </motion.div>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-xl font-display font-bold text-gray-900 mb-2">
             What would you like to do first?
           </h2>
-          <p className="text-gray-600 text-base">
+          <p className="text-gray-600 text-sm">
             Select an option to get started with Websoft AI
           </p>
         </div>
@@ -164,7 +164,7 @@ export default function IntroScreen({
               key={option.id}
               className={`relative group cursor-pointer overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 ${
                 selectedOption === option.id
-                  ? "ring-4 ring-primary ring-opacity-50"
+                  ? "ring-4 ring-[#484ce0] ring-opacity-50"
                   : ""
               }`}
               initial={{ opacity: 0, y: 20 }}

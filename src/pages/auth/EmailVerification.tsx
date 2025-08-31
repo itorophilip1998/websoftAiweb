@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+import { useClerkAuthentication } from "../../hooks/useClerkAuth";
 import { useToast } from "../../contexts/ToastContext";
 import OTPInput from "otp-input-react";
+import Button from "../../components/Button";
 
 export default function EmailVerification() {
-  const { verifyEmail, resendVerificationCode } = useAuth();
+  const { verifyEmail, resendVerificationCode } = useClerkAuthentication();
   const { success: showSuccess, error: showError } = useToast();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -83,7 +84,7 @@ export default function EmailVerification() {
     <div className="auth-page">
       <div className="auth-form">
         <div className="auth-header">
-          <h1>Email Verification</h1>
+          <h1 className="font-display text-2xl">Email Verification</h1>
           <p>Please enter the verification code sent to</p>
           <div className="email-display">
             <strong>{email}</strong>
@@ -107,22 +108,26 @@ export default function EmailVerification() {
         </div>
 
         <div className="verification-actions">
-          <button
+          <Button
             onClick={handleVerify}
-            disabled={loading || otp.length !== 6}
-            className="verify-btn"
+            disabled={otp.length !== 6}
+            loading={loading}
+            size="lg"
+            className="w-full mb-3"
           >
             {loading ? "Verifying..." : "Verify Email"}
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={handleResend}
-            disabled={loading || resendLoading}
-            type="button"
-            className="resend-btn"
+            disabled={loading}
+            loading={resendLoading}
+            variant="outline"
+            size="md"
+            className="w-full"
           >
             {resendLoading ? "Sending..." : "Resend Code"}
-          </button>
+          </Button>
         </div>
 
         <div className="verification-footer">
