@@ -81,6 +81,13 @@ export function useClerkAuthentication() {
   // Sign in with OAuth provider
   const signInWithOAuth = async (provider: "google" | "facebook" | "apple") => {
     try {
+      // Check if user is already signed in
+      if (isSignedIn) {
+        showSuccess("You're already signed in!");
+        navigate("/");
+        return { success: true, message: "Already signed in!" };
+      }
+
       const result = await signIn.authenticateWithRedirect({
         strategy: `oauth_${provider}`,
         redirectUrl: "/",
@@ -89,6 +96,13 @@ export function useClerkAuthentication() {
 
       return { success: true, message: "Redirecting to OAuth provider..." };
     } catch (error: any) {
+      // Handle session exists error gracefully
+      if (error.errors?.[0]?.code === "session_exists") {
+        showSuccess("You're already signed in!");
+        navigate("/");
+        return { success: true, message: "Already signed in!" };
+      }
+      
       const message =
         error.errors?.[0]?.message || `Failed to sign in with ${provider}.`;
       showError(message);
@@ -99,6 +113,13 @@ export function useClerkAuthentication() {
   // Sign up with OAuth provider
   const signUpWithOAuth = async (provider: "google" | "facebook" | "apple") => {
     try {
+      // Check if user is already signed in
+      if (isSignedIn) {
+        showSuccess("You're already signed in!");
+        navigate("/");
+        return { success: true, message: "Already signed in!" };
+      }
+
       const result = await signUp.authenticateWithRedirect({
         strategy: `oauth_${provider}`,
         redirectUrl: "/verification",
@@ -107,6 +128,13 @@ export function useClerkAuthentication() {
 
       return { success: true, message: "Redirecting to OAuth provider..." };
     } catch (error: any) {
+      // Handle session exists error gracefully
+      if (error.errors?.[0]?.code === "session_exists") {
+        showSuccess("You're already signed in!");
+        navigate("/");
+        return { success: true, message: "Already signed in!" };
+      }
+      
       const message =
         error.errors?.[0]?.message || `Failed to sign up with ${provider}.`;
       showError(message);
