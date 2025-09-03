@@ -25,7 +25,7 @@ interface SplashProviderProps {
 
 export const SplashProvider: React.FC<SplashProviderProps> = ({ children }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [message, setMessage] = useState("Loading Websoft AI...");
+  const [message, setMessage] = useState("Loading Rosie AI...");
   const [showProgress, setShowProgress] = useState(false);
   const [progress, setProgress] = useState(0);
 

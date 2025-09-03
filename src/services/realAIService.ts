@@ -1,5 +1,7 @@
 // Real AI Service with OpenAI API Support
 import FootballPredictionService from "./footballPredictionService";
+import { RAGService } from "./ragService";
+import { env } from "../config/env";
 
 console.log("📦 RealAIService imported, environment config:", {
   OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY ? "✅ SET" : "❌ NOT SET",
@@ -128,21 +130,35 @@ export class RealAIModel {
     console.log("🌐 API URL:", `${apiUrl}/chat/completions`);
 
     try {
+      // Enhanced system prompt with more context
+      const systemPrompt = `You are Rosie AI, an advanced and intelligent AI assistant. You are helpful, knowledgeable, and provide detailed, accurate responses. You excel at:
+
+- Programming and software development (React, JavaScript, TypeScript, Python, etc.)
+- Creative writing and content creation
+- Business strategy and analysis
+- Problem-solving and critical thinking
+- Educational explanations and tutoring
+- Football/soccer analysis and predictions
+- General knowledge and research
+
+Always provide comprehensive, well-structured responses that are both informative and engaging. If the user asks follow-up questions, maintain context from previous messages in the conversation.`;
+
       const requestBody = {
         model: "gpt-3.5-turbo",
         messages: [
           {
             role: "system",
-            content:
-              "You are Websoft AI, a helpful and intelligent AI assistant. Provide clear, helpful, and accurate responses.",
+            content: systemPrompt,
           },
           {
             role: "user",
             content: userInput,
           },
         ],
-        max_tokens: 1000,
+        max_tokens: 1500, // Increased token limit for more detailed responses
         temperature: 0.7,
+        presence_penalty: 0.1, // Encourage diverse responses
+        frequency_penalty: 0.1, // Reduce repetition
       };
 
       console.log("📤 Request Body:", JSON.stringify(requestBody, null, 2));
@@ -190,34 +206,49 @@ export class RealAIModel {
   private generateDemoResponse(userInput: string): string {
     const input = userInput.toLowerCase();
 
+    // Enhanced responses with more context and detail
     if (
       input.includes("hello") ||
       input.includes("hi") ||
       input.includes("hey")
     ) {
-      return "Hello! I'm Websoft AI, your intelligent assistant. How can I help you today?";
+      return "Hello! I'm Rosie AI, your intelligent assistant. I'm here to help you with a wide range of tasks including coding, analysis, creative writing, problem-solving, and much more. What would you like to work on today?";
     } else if (
       input.includes("explain") ||
       input.includes("how") ||
       input.includes("why")
     ) {
-      return `I'll explain that for you! Let me break it down step by step. This is a great question that deserves a comprehensive answer.`;
+      return `I'd be happy to explain that for you! Let me break this down into clear, understandable steps. This is an excellent question that deserves a thorough and comprehensive answer. I'll make sure to cover all the important aspects and provide you with actionable insights.`;
     } else if (
       input.includes("react") ||
       input.includes("javascript") ||
       input.includes("code")
     ) {
-      return "I'd be happy to help with programming! What specific question do you have about coding?";
+      return "I'd be delighted to help with programming! I have extensive knowledge of React, JavaScript, TypeScript, and many other technologies. Whether you need help with hooks, components, state management, or debugging, I'm here to assist. What specific coding challenge are you working on?";
     } else if (input.includes("joke") || input.includes("funny")) {
-      return "Why don't programmers like nature? It has too many bugs! 😄";
+      return "Why don't programmers like nature? It has too many bugs! 😄 But seriously, I can help with much more than just jokes - I'm great at problem-solving, creative thinking, and technical assistance!";
     } else if (input.includes("math") || input.includes("calculate")) {
-      return "I can help with math! Please provide a simple calculation like '2 + 2' or '10 * 5'.";
+      return "I can definitely help with mathematics! I can assist with calculations, problem-solving, algebra, calculus, statistics, and more. Please provide the specific math problem or calculation you'd like help with, and I'll work through it step by step.";
     } else if (input.includes("weather")) {
-      return "I'd be happy to help with weather information! However, I don't have access to real-time weather data.";
+      return "I'd be happy to help with weather-related questions! While I don't have access to real-time weather data, I can help you understand weather patterns, climate science, or assist with weather-related projects and research.";
     } else if (input.includes("canna") || input.includes("cannabis")) {
-      return "I'm your specialized cannabis assistant! I can help with cannabis education, research, and information.";
+      return "I'm your specialized cannabis assistant! I can help with cannabis education, research, cultivation techniques, medical applications, legal information, and industry insights. What specific aspect of cannabis would you like to explore?";
+    } else if (input.includes("football") || input.includes("soccer")) {
+      return "I'm passionate about football! I can help with match predictions, team analysis, league standings, player statistics, tactical discussions, and betting insights. What football topic interests you today?";
+    } else if (
+      input.includes("creative") ||
+      input.includes("write") ||
+      input.includes("story")
+    ) {
+      return "I love creative writing! I can help you craft stories, poems, articles, marketing copy, or any other creative content. I can assist with brainstorming, structure, character development, and editing. What kind of creative project are you working on?";
+    } else if (
+      input.includes("business") ||
+      input.includes("marketing") ||
+      input.includes("strategy")
+    ) {
+      return "I'm excellent at business strategy and marketing! I can help with business plans, marketing strategies, market analysis, competitive research, and growth planning. What business challenge can I help you tackle?";
     } else {
-      return `That's an interesting question about "${userInput}". Let me think about this and provide you with a comprehensive answer. I'm here to help!`;
+      return `That's a fascinating question about "${userInput}". I'm excited to dive into this topic with you! Let me provide a comprehensive and thoughtful response that addresses all aspects of your question. I'll make sure to give you actionable insights and clear explanations. What specific angle would you like me to focus on?`;
     }
   }
 }
@@ -227,10 +258,20 @@ export class RealChatAgent {
   private aiModel: RealAIModel;
   private sessions: Map<string, any> = new Map();
   private footballService: FootballPredictionService;
+  private conversationMemory: Map<string, AIMessage[]> = new Map();
+  private contextWindow: number = 10; // Keep last 10 messages for context
+  private ragService: RAGService;
+  private userId: string;
 
-  constructor(config: AIConfig = {}) {
+  constructor(config: AIConfig = {}, userId: string = "default-user") {
     this.aiModel = new RealAIModel(config);
     this.footballService = new FootballPredictionService();
+    this.userId = userId;
+    this.ragService = new RAGService(userId);
+  }
+
+  getUserId(): string {
+    return this.userId;
   }
 
   setConfig(config: AIConfig) {
@@ -258,6 +299,10 @@ export class RealChatAgent {
     try {
       let response = "";
 
+      // Get conversation context for this session
+      const conversationHistory = this.conversationMemory.get(sessionId) || [];
+      const recentContext = conversationHistory.slice(-this.contextWindow);
+
       // Process files if any
       if (files && files.length > 0) {
         console.log("📁 Processing files...");
@@ -276,11 +321,44 @@ export class RealChatAgent {
         const footballResponse = await this.handleFootballPrediction(message);
         response = footballResponse;
       } else {
-        // Generate AI response
-        console.log("🤖 Calling AI model...");
-        const aiResponse = await this.aiModel.generateResponse(message);
-        console.log("✅ AI response received:", aiResponse);
-        response = aiResponse + response;
+        // Generate AI response with RAG if enabled
+        console.log("🤖 Calling AI model with context...");
+
+        if (env.ENABLE_RAG) {
+          console.log("🧠 RAG enabled - using enhanced response");
+          try {
+            const enhancedResponse = await this.ragService.getEnhancedResponse(
+              message,
+              sessionId,
+              true
+            );
+            response = enhancedResponse + response;
+          } catch (ragError) {
+            console.warn(
+              "RAG service failed, falling back to standard AI:",
+              ragError
+            );
+            const contextualMessage = this.buildContextualMessage(
+              message,
+              recentContext
+            );
+            const aiResponse = await this.aiModel.generateResponse(
+              contextualMessage
+            );
+            response = aiResponse + response;
+          }
+        } else {
+          const contextualMessage = this.buildContextualMessage(
+            message,
+            recentContext
+          );
+          const aiResponse = await this.aiModel.generateResponse(
+            contextualMessage
+          );
+          response = aiResponse + response;
+        }
+
+        console.log("✅ AI response received:", response);
       }
 
       const finalMessage: AIMessage = {
@@ -294,6 +372,25 @@ export class RealChatAgent {
         },
       };
 
+      // Update conversation memory
+      this.updateConversationMemory(sessionId, message, finalMessage);
+
+      // Store conversation in RAG database if enabled
+      if (env.ENABLE_RAG) {
+        try {
+          await this.ragService.storeConversation(
+            message,
+            finalMessage.content,
+            sessionId
+          );
+        } catch (ragError) {
+          console.warn(
+            "Failed to store conversation in RAG database:",
+            ragError
+          );
+        }
+      }
+
       console.log("📤 Final message prepared:", finalMessage);
       return finalMessage;
     } catch (error) {
@@ -302,7 +399,7 @@ export class RealChatAgent {
       return {
         id: Date.now().toString(),
         role: "assistant",
-        content: "Hello! I'm Websoft AI. How can I help you today?",
+        content: "Hello! I'm Rosie AI. How can I help you today?",
         timestamp: new Date(),
         type: "text",
         metadata: {},
@@ -335,6 +432,8 @@ export class RealChatAgent {
   }
 
   deleteSession(sessionId: string): boolean {
+    // Clear conversation memory when deleting session
+    this.clearConversationMemory(sessionId);
     return this.sessions.delete(sessionId);
   }
 
@@ -401,6 +500,70 @@ export class RealChatAgent {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   }
 
+  // Build contextual message with conversation history
+  private buildContextualMessage(
+    currentMessage: string,
+    context: AIMessage[]
+  ): string {
+    if (context.length === 0) {
+      return currentMessage;
+    }
+
+    let contextualPrompt = "Previous conversation context:\n";
+
+    // Add recent conversation history
+    context.forEach((msg) => {
+      const role = msg.role === "user" ? "User" : "Assistant";
+      contextualPrompt += `${role}: ${msg.content}\n`;
+    });
+
+    contextualPrompt += `\nCurrent message: ${currentMessage}`;
+    contextualPrompt += `\n\nPlease respond to the current message while considering the conversation context above. Be helpful and maintain continuity with the previous discussion.`;
+
+    return contextualPrompt;
+  }
+
+  // Update conversation memory for a session
+  private updateConversationMemory(
+    sessionId: string,
+    userMessage: string,
+    aiResponse: AIMessage
+  ): void {
+    const currentMemory = this.conversationMemory.get(sessionId) || [];
+
+    // Add user message
+    const userMsg: AIMessage = {
+      id: Date.now().toString() + "_user",
+      role: "user",
+      content: userMessage,
+      timestamp: new Date(),
+      type: "text",
+    };
+
+    // Add both messages to memory
+    const updatedMemory = [...currentMemory, userMsg, aiResponse];
+
+    // Keep only the last contextWindow messages to prevent memory overflow
+    const trimmedMemory = updatedMemory.slice(-this.contextWindow);
+
+    this.conversationMemory.set(sessionId, trimmedMemory);
+
+    console.log(
+      `🧠 Updated conversation memory for session ${sessionId}: ${trimmedMemory.length} messages`
+    );
+  }
+
+  // Get conversation context for a session
+  getConversationContext(sessionId: string): AIMessage[] {
+    return this.conversationMemory.get(sessionId) || [];
+  }
+
+  // Clear conversation memory for a session
+  clearConversationMemory(sessionId: string): void {
+    this.conversationMemory.delete(sessionId);
+    console.log(`🧠 Cleared conversation memory for session ${sessionId}`);
+  }
+
   // Football prediction methods
   private isFootballPredictionRequest(message: string): boolean {
     const footballKeywords = [
@@ -408,7 +571,6 @@ export class RealChatAgent {
       "soccer",
       "prediction",
       "match",
-      "game",
       "team",
       "league",
       "premier league",
@@ -525,5 +687,79 @@ export class RealChatAgent {
       `• "Upcoming matches this week"\n` +
       `• "Predict the result of [Team A] vs [Team B]"`
     );
+  }
+
+  // RAG Database Operations
+  async getUserInfo(): Promise<any> {
+    if (!env.ENABLE_RAG) {
+      return { assets: [], spaces: [], locations: [] };
+    }
+    return await this.ragService.getUserInfo();
+  }
+
+  async getAssetWarranty(assetId: string, assetName: string): Promise<string> {
+    if (!env.ENABLE_RAG) {
+      return "RAG functionality is not enabled.";
+    }
+    return await this.ragService.getAssetWarranty(assetId, assetName);
+  }
+
+  async estimateAssetValue(
+    assetId: string,
+    assetName: string
+  ): Promise<string> {
+    if (!env.ENABLE_RAG) {
+      return "RAG functionality is not enabled.";
+    }
+    return await this.ragService.estimateAssetValue(assetId, assetName);
+  }
+
+  async createLocation(locationData: {
+    name: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    street1?: string;
+    zipcode?: string;
+  }): Promise<string> {
+    if (!env.ENABLE_RAG) {
+      return "RAG functionality is not enabled.";
+    }
+    return await this.ragService.createLocation(locationData);
+  }
+
+  async createSpace(spaceName: string): Promise<string> {
+    if (!env.ENABLE_RAG) {
+      return "RAG functionality is not enabled.";
+    }
+    return await this.ragService.createSpace(spaceName);
+  }
+
+  async editLocation(locationId: string, updates: any): Promise<string> {
+    if (!env.ENABLE_RAG) {
+      return "RAG functionality is not enabled.";
+    }
+    return await this.ragService.editLocation(locationId, updates);
+  }
+
+  async editSpace(spaceId: string, updates: any): Promise<string> {
+    if (!env.ENABLE_RAG) {
+      return "RAG functionality is not enabled.";
+    }
+    return await this.ragService.editSpace(spaceId, updates);
+  }
+
+  async editAsset(assetId: string, updates: any): Promise<string> {
+    if (!env.ENABLE_RAG) {
+      return "RAG functionality is not enabled.";
+    }
+    return await this.ragService.editAsset(assetId, updates);
+  }
+
+  async searchKnowledge(query: string, k: number = 5): Promise<string[]> {
+    if (!env.ENABLE_RAG) {
+      return [];
+    }
+    return await this.ragService.searchKnowledge(query, k);
   }
 }

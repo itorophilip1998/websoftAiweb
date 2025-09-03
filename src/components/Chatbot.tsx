@@ -130,7 +130,7 @@ export default function Chatbot({ className = "" }: ChatbotProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Bot className="w-5 h-5" />
-            <h3 className="font-semibold">Websoft AI</h3>
+            <h3 className="font-semibold">Rosie AI</h3>
           </div>
           <div className="flex items-center space-x-2">
             <button

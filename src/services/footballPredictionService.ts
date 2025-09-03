@@ -1,4 +1,4 @@
-// Football Prediction Service for Websoft AI
+// Football Prediction Service for Rosie AI
 export interface MatchPrediction {
   homeTeam: string;
   awayTeam: string;

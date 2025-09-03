@@ -48,23 +48,9 @@ export default function AppRouter() {
   return (
     <Routes>
       {/* Protected routes */}
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <AIChat />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/" element={<AIChat />} />
       <Route path="/ai-chat" element={<Navigate to="/" replace />} />
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route
         path="/settings"
         element={

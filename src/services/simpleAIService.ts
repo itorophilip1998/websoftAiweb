@@ -45,7 +45,7 @@ export class SimpleAIModel {
       input.includes("hi") ||
       input.includes("hey")
     ) {
-      return "Hello! I'm Websoft AI, your intelligent assistant. How can I help you today?";
+      return "Hello! I'm Rosie AI, your intelligent assistant. How can I help you today?";
     } else if (
       input.includes("explain") ||
       input.includes("how") ||
@@ -172,7 +172,7 @@ export class SimpleChatAgent {
         id: Date.now().toString(),
         role: "assistant",
         content:
-          "Hello! I'm Websoft AI, your intelligent assistant. How can I help you today?",
+          "Hello! I'm Rosie AI, your intelligent assistant. How can I help you today?",
         timestamp: new Date(),
         type: "text",
         metadata: {},

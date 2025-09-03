@@ -6,14 +6,16 @@ export const env = {
   // API Configuration
   OPENAI_API_URL:
     import.meta.env.VITE_OPENAI_API_URL || "https://api.openai.com/v1",
+  RAG_API_URL: import.meta.env.VITE_RAG_API_URL || "http://localhost:8000",
 
   // App Configuration
-  APP_NAME: import.meta.env.VITE_APP_NAME || "Websoft AI",
+  APP_NAME: import.meta.env.VITE_APP_NAME || "Rosie AI",
   APP_VERSION: import.meta.env.VITE_APP_VERSION || "1.0.0",
 
   // Feature Flags
   ENABLE_REAL_AI: import.meta.env.VITE_ENABLE_REAL_AI === "true",
   ENABLE_DEMO_MODE: import.meta.env.VITE_ENABLE_DEMO_MODE !== "false",
+  ENABLE_RAG: import.meta.env.VITE_ENABLE_RAG === "true",
 
   // Development
   IS_DEVELOPMENT: import.meta.env.DEV,
@@ -33,9 +35,11 @@ console.log(
     : "NOT SET"
 );
 console.log("🌐 VITE_OPENAI_API_URL:", import.meta.env.VITE_OPENAI_API_URL);
+console.log("🔗 VITE_RAG_API_URL:", import.meta.env.VITE_RAG_API_URL);
 console.log("📱 VITE_APP_NAME:", import.meta.env.VITE_APP_NAME);
 console.log("🎯 VITE_ENABLE_REAL_AI:", import.meta.env.VITE_ENABLE_REAL_AI);
 console.log("🎭 VITE_ENABLE_DEMO_MODE:", import.meta.env.VITE_ENABLE_DEMO_MODE);
+console.log("🧠 VITE_ENABLE_RAG:", import.meta.env.VITE_ENABLE_RAG);
 console.log("🚀 IS_DEVELOPMENT:", import.meta.env.DEV);
 console.log("📦 IS_PRODUCTION:", import.meta.env.PROD);
 

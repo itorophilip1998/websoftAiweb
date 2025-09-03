@@ -308,7 +308,7 @@ function EnhancedChatbotComponent({ className = "" }: EnhancedChatbotProps) {
           <div className="flex items-center space-x-3">
             <Brain className="w-5 h-5" />
             <div>
-              <h3 className="font-semibold">Websoft AI</h3>
+              <h3 className="font-semibold">Rosie AI</h3>
               <p className="text-xs opacity-90">Powered by Enhanced LLM</p>
             </div>
           </div>
@@ -672,7 +672,7 @@ class EnhancedChatbotErrorBoundary extends React.Component<
               Something went wrong
             </h3>
             <p className="text-gray-600 mb-4">
-              Websoft AI encountered an error. Please refresh the page.
+              Rosie AI encountered an error. Please refresh the page.
             </p>
             <button
               onClick={() => window.location.reload()}

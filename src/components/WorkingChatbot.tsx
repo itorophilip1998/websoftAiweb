@@ -263,7 +263,7 @@ export default function WorkingChatbot({
           <div className="flex items-center space-x-3">
             <Brain className="w-5 h-5" />
             <div>
-              <h3 className="font-semibold">Websoft AI</h3>
+              <h3 className="font-semibold">Rosie AI</h3>
               <p className="text-xs opacity-90">
                 {agentPersonality
                   .replace(/_/g, " ")

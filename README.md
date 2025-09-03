@@ -69,7 +69,7 @@ VITE_OPENAI_API_KEY=meas
 VITE_OPENAI_API_URL=https://api.openai.com/v1
 
 # App Configuration
-VITE_APP_NAME=Websoft AI
+VITE_APP_NAME=Rosie AI
 VITE_APP_VERSION=1.0.0
 
 # Feature Flags

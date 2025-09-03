@@ -5,7 +5,7 @@ import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../contexts/ToastContext";
-import { useSplash } from "../contexts/SplashContext";
+
 import {
   Send,
   Trash2,
@@ -29,17 +29,13 @@ import {
   Mic,
   MicOff,
 } from "lucide-react";
-import {
-  RealChatAgent,
-  type AIMessage,
-  type AIConfig,
-} from "../services/realAIService";
+import { RealChatAgent, type AIMessage } from "../services/realAIService";
 
 export default function AIChat() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { success: showSuccess, error: showError } = useToast();
-  const { showSplash, hideSplash } = useSplash();
+
   const [chatAgent] = useState(() => new RealChatAgent());
   const [sessions, setSessions] = useState<any[]>([]);
   const [currentSession, setCurrentSession] = useState<any>(null);
@@ -47,23 +43,17 @@ export default function AIChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [searchWeb, setSearchWeb] = useState(false);
-  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
   const [agentPersonality, setAgentPersonality] = useState(
     "intelligent_assistant"
   );
-  const [showCannedPrompts, setShowCannedPrompts] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [useDemoMode, setUseDemoMode] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
-  const [transcript, setTranscript] = useState("");
   const [recognition, setRecognition] = useState<any>(null);
   const [showApiConfig, setShowApiConfig] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [apiKey, setApiKey] = useState("");
   const [isConfiguring, setIsConfiguring] = useState(false);
-  const [activeMessageMenu, setActiveMessageMenu] = useState<string | null>(
-    null
-  );
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editMessageContent, setEditMessageContent] = useState("");
 
@@ -155,7 +145,7 @@ export default function AIChat() {
     }
 
     let sportyBetCode = "SPORTYBET_" + Date.now().toString().slice(-6) + "\n\n";
-    sportyBetCode += "Generated from Websoft AI Predictions\n";
+    sportyBetCode += "Generated from Rosie AI Predictions\n";
     sportyBetCode += "Date: " + new Date().toLocaleDateString() + "\n\n";
 
     matches.forEach((match, index) => {
@@ -195,7 +185,7 @@ export default function AIChat() {
   const deleteMessage = (messageId: string) => {
     if (currentSession) {
       const updatedMessages = currentSession.messages.filter(
-        (msg) => msg.id !== messageId
+        (msg: any) => msg.id !== messageId
       );
       setCurrentSession({ ...currentSession, messages: updatedMessages });
       showSuccess("Message deleted!");
@@ -209,7 +199,7 @@ export default function AIChat() {
 
   const saveEditedMessage = (messageId: string) => {
     if (currentSession) {
-      const updatedMessages = currentSession.messages.map((msg) =>
+      const updatedMessages = currentSession.messages.map((msg: any) =>
         msg.id === messageId ? { ...msg, content: editMessageContent } : msg
       );
       setCurrentSession({ ...currentSession, messages: updatedMessages });
@@ -313,7 +303,6 @@ export default function AIChat() {
         }
 
         if (finalTranscript) {
-          setTranscript(finalTranscript);
           setInputMessage(finalTranscript);
         }
       };
@@ -379,7 +368,6 @@ export default function AIChat() {
     } else {
       recognition.start();
       setIsRecording(true);
-      setTranscript("");
     }
   };
 
@@ -427,7 +415,6 @@ export default function AIChat() {
     if (!currentSession || isLoading) return;
 
     setIsLoading(true);
-    showSplash("Processing your request...", false);
 
     try {
       // Add user message directly
@@ -490,7 +477,6 @@ export default function AIChat() {
       );
     } finally {
       setIsLoading(false);
-      hideSplash();
     }
   };
 
@@ -499,7 +485,6 @@ export default function AIChat() {
     if (!currentSession || isLoading) return;
 
     setIsLoading(true);
-    showSplash("Processing your message...", false);
     const message = inputMessage.trim();
     const files = [...uploadedFiles];
 
@@ -573,7 +558,6 @@ export default function AIChat() {
       );
     } finally {
       setIsLoading(false);
-      hideSplash();
     }
   };
 
@@ -619,12 +603,12 @@ export default function AIChat() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex overflow-hidden">
+    <div className="h-screen bg-gray-50 flex overflow-hidden">
       {/* Sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
           <motion.div
-            className="w-80 bg-white border-r border-gray-200 flex flex-col"
+            className="w-80 bg-white border-r border-gray-200 flex flex-col h-screen"
             initial={{ x: -320 }}
             animate={{ x: 0 }}
             exit={{ x: -320 }}
@@ -636,7 +620,7 @@ export default function AIChat() {
                 <div className="flex items-center space-x-3">
                   <Brain className="w-6 h-6 text-primary" />
                   <h1 className="text-lg font-semibold text-gray-900">
-                    Websoft AI
+                    Rosie AI
                   </h1>
                 </div>
                 <button
@@ -735,7 +719,7 @@ export default function AIChat() {
       </AnimatePresence>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col bg-gray-50">
+      <div className="flex-1 flex flex-col bg-gray-50 h-screen">
         {/* Top Bar - Fixed */}
         <div className="bg-white border-b border-gray-200 p-4 flex-shrink-0">
           <div className="max-w-6xl mx-auto">
@@ -751,13 +735,13 @@ export default function AIChat() {
                 )}
                 <div className="flex flex-col space-y-2">
                   <h2 className="text-xl font-display font-bold text-primary block">
-                    {currentSession?.title || "Websoft AI Chat"}
+                    {currentSession?.title || "Rosie AI Chat"}
                   </h2>
                   <div className="flex items-center space-x-2 text-sm">
                     <span className="font-medium text-gray-600">
                       💬{" "}
                       {currentSession?.messages?.filter(
-                        (m) => m.role === "user"
+                        (m: any) => m.role === "user"
                       ).length || 0}{" "}
                       Prompts
                     </span>
@@ -765,7 +749,7 @@ export default function AIChat() {
                     <span className="font-medium text-gray-600">
                       🤖{" "}
                       {currentSession?.messages?.filter(
-                        (m) => m.role === "assistant"
+                        (m: any) => m.role === "assistant"
                       ).length || 0}{" "}
                       Responses
                     </span>
@@ -900,7 +884,7 @@ export default function AIChat() {
 
           {/* Advanced Options */}
           <AnimatePresence>
-            {showAdvancedOptions && (
+            {false && (
               <motion.div
                 className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200"
                 initial={{ height: 0, opacity: 0 }}
@@ -964,7 +948,7 @@ export default function AIChat() {
 
         {/* Chat Messages - Scrollable */}
         <div
-          className="flex-1 overflow-y-auto relative transition-all duration-200"
+          className="flex-1 overflow-y-auto relative transition-all duration-200 min-h-0"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -1014,10 +998,10 @@ export default function AIChat() {
                   <Brain className="w-12 h-12 text-gray-400" />
                 </div>
                 <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-                  Welcome to Websoft AI
+                  Welcome to Rosie AI
                 </h3>
                 <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                  I'm your intelligent Websoft AI companion. Ask me anything,
+                  I'm your intelligent Rosie AI companion. Ask me anything,
                   upload files, or let me help you with creative tasks.
                 </p>
                 <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
@@ -1515,9 +1499,9 @@ export default function AIChat() {
           </div>
         </div>
 
-        {/* Input Area */}
-        <div className="bg-white border-t border-gray-200 p-4">
-          <div className="max-w-6xl mx-auto">
+        {/* Input Area - Fixed at Bottom */}
+        <div className="bg-white border-t border-gray-200 flex-shrink-0">
+          <div className="max-w-6xl mx-auto p-4">
             {/* File Upload Area */}
             {uploadedFiles.length > 0 && (
               <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
@@ -1550,143 +1534,141 @@ export default function AIChat() {
               </div>
             )}
 
-            {/* ChatGPT-style Input - Fixed */}
-            <div className="bg-white border-t border-gray-200 p-4 flex-shrink-0">
-              <div className="relative max-w-6xl mx-auto ai-chat-container">
-                {/* Speech Recognition Status */}
-                {isRecording && (
-                  <div className="mb-3 text-center">
-                    <div className="inline-flex items-center space-x-2 bg-red-50 border border-red-200 rounded-full px-4 py-2">
-                      <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                      <span className="text-sm text-red-700 font-medium">
-                        Listening... Speak now
-                      </span>
-                    </div>
+            {/* ChatGPT-style Input */}
+            <div className="relative ai-chat-container">
+              {/* Speech Recognition Status */}
+              {isRecording && (
+                <div className="mb-3 text-center">
+                  <div className="inline-flex items-center space-x-2 bg-red-50 border border-red-200 rounded-full px-4 py-2">
+                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm text-red-700 font-medium">
+                      Listening... Speak now
+                    </span>
                   </div>
-                )}
-                <textarea
-                  ref={inputRef}
-                  value={inputMessage}
-                  onChange={(e) => {
-                    setInputMessage(e.target.value);
-                    // Auto-resize textarea
-                    const textarea = e.target;
-                    textarea.style.height = "auto";
-                    textarea.style.height =
-                      Math.min(textarea.scrollHeight, 120) + "px";
-                  }}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Message Websoft AI..."
-                  className="w-full px-6 py-4 pr-32 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none overflow-hidden ai-chat-input"
-                  disabled={isLoading}
-                  rows={1}
-                  style={{
-                    minHeight: "56px",
-                    maxHeight: "120px",
-                    // Prevent extension interference
-                    all: "unset",
-                    boxSizing: "border-box",
-                    display: "block",
-                    width: "100%",
-                    padding: "24px 128px 24px 24px",
-                    border: "1px solid #d1d5db",
-                    borderRadius: "12px",
-                    fontSize: "16px",
-                    lineHeight: "1.5",
-                    resize: "none",
-                    overflow: "hidden",
-                    backgroundColor: "white",
-                    color: "#374151",
-                  }}
-                />
-
-                {/* Microphone Button */}
-                <button
-                  onClick={toggleMicrophone}
-                  disabled={!recognition}
-                  className={`absolute right-20 top-1/2 transform -translate-y-1/2 p-2.5 rounded-lg transition-colors ${
-                    isRecording
-                      ? "bg-red-500 hover:bg-red-600 text-white"
-                      : "hover:bg-gray-100 text-gray-500 hover:text-gray-700"
-                  } ${
-                    !recognition
-                      ? "opacity-50 cursor-not-allowed"
-                      : "cursor-pointer"
-                  }`}
-                  title={isRecording ? "Stop recording" : "Start voice input"}
-                  style={{
-                    height: "40px",
-                    width: "40px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    position: "absolute",
-                    right: "80px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                  }}
-                >
-                  {isRecording ? (
-                    <MicOff className="w-4 h-4" />
-                  ) : (
-                    <Mic className="w-4 h-4" />
-                  )}
-                </button>
-
-                {/* File Upload Button */}
-                <div
-                  {...getRootProps()}
-                  className="absolute p-2.5 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors"
-                  title="Upload files"
-                  style={{
-                    height: "40px",
-                    width: "40px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    position: "absolute",
-                    right: "120px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                  }}
-                >
-                  <input {...getInputProps()} />
-                  <Upload className="w-4 h-4 text-gray-500 hover:text-gray-700" />
                 </div>
+              )}
+              <textarea
+                ref={inputRef}
+                value={inputMessage}
+                onChange={(e) => {
+                  setInputMessage(e.target.value);
+                  // Auto-resize textarea
+                  const textarea = e.target;
+                  textarea.style.height = "auto";
+                  textarea.style.height =
+                    Math.min(textarea.scrollHeight, 120) + "px";
+                }}
+                onKeyPress={handleKeyPress}
+                placeholder="Message Rosie AI..."
+                className="w-full px-6 py-4 pr-32 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none overflow-hidden ai-chat-input"
+                disabled={isLoading}
+                rows={1}
+                style={{
+                  minHeight: "56px",
+                  maxHeight: "120px",
+                  // Prevent extension interference
+                  all: "unset",
+                  boxSizing: "border-box",
+                  display: "block",
+                  width: "100%",
+                  padding: "24px 128px 24px 24px",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "12px",
+                  fontSize: "16px",
+                  lineHeight: "1.5",
+                  resize: "none",
+                  overflow: "hidden",
+                  backgroundColor: "white",
+                  color: "#374151",
+                }}
+              />
 
-                {/* Send Button */}
-                <motion.button
-                  onClick={sendMessage}
-                  disabled={
-                    (!inputMessage.trim() && uploadedFiles.length === 0) ||
-                    isLoading
-                  }
-                  className="absolute bg-primary hover:bg-primary/90 text-white p-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  style={{
-                    height: "48px",
-                    width: "48px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    position: "absolute",
-                    right: "8px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                  }}
-                >
-                  <Send className="w-5 h-5" />
-                </motion.button>
+              {/* Microphone Button */}
+              <button
+                onClick={toggleMicrophone}
+                disabled={!recognition}
+                className={`absolute right-20 top-1/2 transform -translate-y-1/2 p-2.5 rounded-lg transition-colors ${
+                  isRecording
+                    ? "bg-red-500 hover:bg-red-600 text-white"
+                    : "hover:bg-gray-100 text-gray-500 hover:text-gray-700"
+                } ${
+                  !recognition
+                    ? "opacity-50 cursor-not-allowed"
+                    : "cursor-pointer"
+                }`}
+                title={isRecording ? "Stop recording" : "Start voice input"}
+                style={{
+                  height: "40px",
+                  width: "40px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "absolute",
+                  right: "80px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                {isRecording ? (
+                  <MicOff className="w-4 h-4" />
+                ) : (
+                  <Mic className="w-4 h-4" />
+                )}
+              </button>
+
+              {/* File Upload Button */}
+              <div
+                {...getRootProps()}
+                className="absolute p-2.5 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors"
+                title="Upload files"
+                style={{
+                  height: "40px",
+                  width: "40px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "absolute",
+                  right: "120px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <input {...getInputProps()} />
+                <Upload className="w-4 h-4 text-gray-500 hover:text-gray-700" />
               </div>
 
-              {/* Help Text */}
-              <div className="mt-2 text-center">
-                <p className="text-xs text-gray-500">
-                  Press Enter to send, Shift+Enter for new line • Drag & drop
-                  files anywhere or click the upload icon
-                </p>
-              </div>
+              {/* Send Button */}
+              <motion.button
+                onClick={sendMessage}
+                disabled={
+                  (!inputMessage.trim() && uploadedFiles.length === 0) ||
+                  isLoading
+                }
+                className="absolute bg-primary hover:bg-primary/90 text-white p-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  height: "48px",
+                  width: "48px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "absolute",
+                  right: "8px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <Send className="w-5 h-5" />
+              </motion.button>
+            </div>
+
+            {/* Help Text */}
+            <div className="mt-2 text-center">
+              <p className="text-xs text-gray-500">
+                Press Enter to send, Shift+Enter for new line • Drag & drop
+                files anywhere or click the upload icon
+              </p>
             </div>
           </div>
         </div>

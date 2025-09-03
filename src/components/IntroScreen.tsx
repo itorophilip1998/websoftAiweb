@@ -29,7 +29,7 @@ export default function IntroScreen({
     {
       id: "chat",
       title: "Start Chatting",
-      description: "Begin a conversation with Websoft AI",
+      description: "Begin a conversation with Rosie AI",
       icon: MessageSquare,
       color: "from-blue-500 to-indigo-600",
       action: () => navigate("/"),
@@ -108,7 +108,7 @@ export default function IntroScreen({
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
           >
-            You're all set up with Websoft AI! Choose how you'd like to get
+            You're all set up with Rosie AI! Choose how you'd like to get
             started.
           </motion.p>
 
@@ -153,7 +153,7 @@ export default function IntroScreen({
             What would you like to do first?
           </h2>
           <p className="text-gray-600 text-sm">
-            Select an option to get started with Websoft AI
+            Select an option to get started with Rosie AI
           </p>
         </div>
 

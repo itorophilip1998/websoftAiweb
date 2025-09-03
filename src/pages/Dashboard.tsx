@@ -35,35 +35,14 @@ export default function Dashboard() {
     navigate("/signin");
   };
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">
-            Please sign in to access the dashboard
-          </h1>
-          <motion.button
-            onClick={() => navigate("/signin")}
-            className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Sign In
-          </motion.button>
-        </motion.div>
-      </div>
-    );
-  }
+  // Handle non-authenticated users with a welcome message
+  const isGuest = !user;
 
   const tabs = [
     { id: "overview", name: "Overview", icon: BarChart3 },
-    { id: "profile", name: "Profile", icon: User },
+    ...(isGuest ? [] : [{ id: "profile", name: "Profile", icon: User }]),
     { id: "analytics", name: "Analytics", icon: TrendingUp },
-    { id: "settings", name: "Settings", icon: Settings },
+    ...(isGuest ? [] : [{ id: "settings", name: "Settings", icon: Settings }]),
   ];
 
   const stats = [
@@ -147,7 +126,9 @@ export default function Dashboard() {
                   Dashboard
                 </h1>
                 <p className="text-sm text-gray-500">
-                  Welcome back, {user.username}!
+                  {isGuest
+                    ? "Welcome to Rosie AI Dashboard!"
+                    : `Welcome back, ${user.username}!`}
                 </p>
               </div>
             </motion.div>
@@ -160,18 +141,30 @@ export default function Dashboard() {
                 whileTap={{ scale: 0.95 }}
               >
                 <Brain className="w-4 h-4" />
-                <span>Websoft AI Chat</span>
+                <span>Rosie AI Chat</span>
               </motion.button>
 
-              <motion.button
-                onClick={handleSignOut}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Sign Out</span>
-              </motion.button>
+              {isGuest ? (
+                <motion.button
+                  onClick={() => navigate("/signin")}
+                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <User className="w-4 h-4" />
+                  <span>Sign In</span>
+                </motion.button>
+              ) : (
+                <motion.button
+                  onClick={handleSignOut}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Out</span>
+                </motion.button>
+              )}
             </div>
           </div>
         </div>
@@ -242,87 +235,136 @@ export default function Dashboard() {
               </div>
 
               {/* User Info Card */}
-              <motion.div
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
-                  <User className="w-5 h-5 text-primary" />
-                  <span>User Information</span>
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <Mail className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">
-                          Email
-                        </p>
-                        <p className="text-gray-900">{user.email}</p>
+              {!isGuest && (
+                <motion.div
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
+                    <User className="w-5 h-5 text-primary" />
+                    <span>User Information</span>
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-3">
+                        <Mail className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-600">
+                            Email
+                          </p>
+                          <p className="text-gray-900">{user.email}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <Hash className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-600">
+                            Username
+                          </p>
+                          <p className="text-gray-900">{user.username}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <User className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-600">
+                            Full Name
+                          </p>
+                          <p className="text-gray-900">
+                            {user.fullName || "Not set"}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <Hash className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">
-                          Username
-                        </p>
-                        <p className="text-gray-900">{user.username}</p>
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-3">
+                        <Calendar className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-600">
+                            Created
+                          </p>
+                          <p className="text-gray-900">
+                            {new Date(user.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <User className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">
-                          Full Name
-                        </p>
-                        <p className="text-gray-900">
-                          {user.fullName || "Not set"}
-                        </p>
+                      <div className="flex items-center space-x-3">
+                        <Clock className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-600">
+                            Last Sign In
+                          </p>
+                          <p className="text-gray-900">
+                            {user.lastSignInAt
+                              ? new Date(user.lastSignInAt).toLocaleDateString()
+                              : "Never"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <Hash className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-600">
+                            User ID
+                          </p>
+                          <p className="text-gray-900 font-mono text-sm">
+                            {user.id}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <Calendar className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">
-                          Created
-                        </p>
-                        <p className="text-gray-900">
-                          {new Date(user.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
+                </motion.div>
+              )}
+
+              {/* Guest Welcome Card */}
+              {isGuest && (
+                <motion.div
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
+                    <User className="w-5 h-5 text-primary" />
+                    <span>Welcome to Rosie AI</span>
+                  </h2>
+                  <div className="text-center py-8">
+                    <div className="w-20 h-20 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Brain className="w-10 h-10 text-white" />
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <Clock className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">
-                          Last Sign In
-                        </p>
-                        <p className="text-gray-900">
-                          {user.lastSignInAt
-                            ? new Date(user.lastSignInAt).toLocaleDateString()
-                            : "Never"}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <Hash className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">
-                          User ID
-                        </p>
-                        <p className="text-gray-900 font-mono text-sm">
-                          {user.id}
-                        </p>
-                      </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Get Started with Rosie AI
+                    </h3>
+                    <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                      Sign in to access your personalized dashboard, track your
+                      AI chat history, and unlock advanced features.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <motion.button
+                        onClick={() => navigate("/signin")}
+                        className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <User className="w-4 h-4" />
+                        <span>Sign In</span>
+                      </motion.button>
+                      <motion.button
+                        onClick={() => navigate("/signup")}
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <User className="w-4 h-4" />
+                        <span>Create Account</span>
+                      </motion.button>
                     </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              )}
 
               {/* Recent Activities */}
               <motion.div
@@ -380,34 +422,68 @@ export default function Dashboard() {
                   >
                     <Brain className="w-8 h-8 text-primary mx-auto mb-2 group-hover:scale-110 transition-transform" />
                     <p className="font-medium text-gray-900">Start AI Chat</p>
-                    <p className="text-sm text-gray-500">Websoft AI Chat</p>
+                    <p className="text-sm text-gray-500">Rosie AI Chat</p>
                   </motion.button>
 
-                  <motion.button
-                    onClick={() => navigate("/profile")}
-                    disabled
-                    className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center opacity-50 cursor-not-allowed"
-                  >
-                    <Edit3 className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                    <p className="font-medium text-gray-900">Edit Profile</p>
-                    <p className="text-sm text-gray-500">Coming Soon</p>
-                  </motion.button>
+                  {!isGuest && (
+                    <motion.button
+                      onClick={() => navigate("/profile")}
+                      disabled
+                      className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center opacity-50 cursor-not-allowed"
+                    >
+                      <Edit3 className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                      <p className="font-medium text-gray-900">Edit Profile</p>
+                      <p className="text-sm text-gray-500">Coming Soon</p>
+                    </motion.button>
+                  )}
 
-                  <motion.button
-                    onClick={() => navigate("/settings")}
-                    disabled
-                    className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center opacity-50 cursor-not-allowed"
-                  >
-                    <Settings className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                    <p className="font-medium text-gray-900">Settings</p>
-                    <p className="text-sm text-gray-500">Coming Soon</p>
-                  </motion.button>
+                  {!isGuest && (
+                    <motion.button
+                      onClick={() => navigate("/settings")}
+                      disabled
+                      className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center opacity-50 cursor-not-allowed"
+                    >
+                      <Settings className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                      <p className="font-medium text-gray-900">Settings</p>
+                      <p className="text-sm text-gray-500">Coming Soon</p>
+                    </motion.button>
+                  )}
+
+                  {isGuest && (
+                    <motion.button
+                      onClick={() => navigate("/signin")}
+                      className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5 transition-all text-center group"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <User className="w-8 h-8 text-primary mx-auto mb-2 group-hover:scale-110 transition-transform" />
+                      <p className="font-medium text-gray-900">Sign In</p>
+                      <p className="text-sm text-gray-500">
+                        Access your account
+                      </p>
+                    </motion.button>
+                  )}
+
+                  {isGuest && (
+                    <motion.button
+                      onClick={() => navigate("/signup")}
+                      className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5 transition-all text-center group"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <User className="w-8 h-8 text-primary mx-auto mb-2 group-hover:scale-110 transition-transform" />
+                      <p className="font-medium text-gray-900">
+                        Create Account
+                      </p>
+                      <p className="text-sm text-gray-500">Join Rosie AI</p>
+                    </motion.button>
+                  )}
                 </div>
               </motion.div>
             </motion.div>
           )}
 
-          {activeTab === "profile" && (
+          {activeTab === "profile" && !isGuest && (
             <motion.div
               key="profile"
               initial={{ opacity: 0, y: 20 }}
@@ -673,7 +749,7 @@ export default function Dashboard() {
             </motion.div>
           )}
 
-          {activeTab === "settings" && (
+          {activeTab === "settings" && !isGuest && (
             <motion.div
               key="settings"
               initial={{ opacity: 0, y: 20 }}

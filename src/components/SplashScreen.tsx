@@ -9,7 +9,7 @@ interface SplashScreenProps {
 }
 
 export default function SplashScreen({
-  message = "Loading Websoft AI...",
+  message = "Loading Rosie AI...",
   showProgress = false,
   progress = 0,
 }: SplashScreenProps) {
@@ -44,7 +44,7 @@ export default function SplashScreen({
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.5 }}
         >
-          Websoft AI
+          Rosie AI
         </motion.h1>
 
         {/* Loading Message */}
