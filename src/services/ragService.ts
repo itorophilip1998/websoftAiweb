@@ -405,7 +405,3 @@ export class RAGService {
 
 // Export singleton instance
 export const ragService = new RAGService();
-<<<<<<< HEAD
-=======
-
->>>>>>> 5febe5e (update)
