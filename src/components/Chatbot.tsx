@@ -1,15 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Send,
-  MessageCircle,
-  Trash2,
-  Plus,
-  Bot,
-  User,
-  Clock,
-} from "lucide-react";
-import { ChatAgent, ChatSession, ChatMessage } from "../utils/llmModel";
+import { Send, MessageCircle, Trash2, Plus, Bot, User } from "lucide-react";
+import { ChatAgent, type ChatSession } from "../utils/llmModel";
 
 interface ChatbotProps {
   className?: string;
